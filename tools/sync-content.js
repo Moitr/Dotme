@@ -203,6 +203,45 @@ function originalContentUrl(pathname) {
   return new URL(pathname, `${ORIGINAL_SITE_URL}/`).toString();
 }
 
+function metadataIndicatesAi(value) {
+  if (Array.isArray(value)) return value.some((entry) => metadataIndicatesAi(entry));
+  if (typeof value === 'number') return value > 0;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    return normalized !== '' && normalized !== '0' && normalized !== 'false';
+  }
+  return Boolean(value);
+}
+
+function hasAiMetadata(metadata) {
+  if (!metadata || typeof metadata !== 'object') return false;
+  const value = metadata.aiGen === undefined ? metadata.ai_gen : metadata.aiGen;
+  return value !== undefined && metadataIndicatesAi(value);
+}
+
+function normalizedRelatedArticle(related) {
+  if (!related || typeof related !== 'object') return null;
+  const id = String(related.id || '').trim();
+  const title = String(related.title || '').trim();
+  if (!id || !title) return null;
+
+  let originalUrl;
+  try {
+    originalUrl = related.nid
+      ? originalContentUrl(getNotePath(related))
+      : originalContentUrl(getPostPath(related));
+  } catch {
+    return null;
+  }
+
+  const summary = String(related.summary || '').replace(/\r\n?/g, '\n').trim();
+  return {
+    title,
+    original_url: originalUrl,
+    ...(summary ? { summary } : {})
+  };
+}
+
 function normalizedRemoteItem(type, listItem, detail) {
   const id = String(detail && detail.id || '').trim();
   const expectedId = String(listItem && listItem.id || '').trim();
@@ -227,7 +266,11 @@ function normalizedRemoteItem(type, listItem, detail) {
     contentFormat: String(detail.content_format || 'markdown').trim() || 'markdown',
     tags: Array.isArray(detail.tags)
       ? Array.from(new Set(detail.tags.map((tag) => String(tag).trim()).filter(Boolean)))
-      : []
+      : [],
+    relatedArticles: Array.isArray(detail.related)
+      ? detail.related.map(normalizedRelatedArticle).filter(Boolean)
+      : [],
+    aiAssisted: hasAiMetadata(detail.meta) || hasAiMetadata(listItem && listItem.meta)
   };
 
   if (type === 'post') {
@@ -346,6 +389,8 @@ function renderPost(item, mappingEntry) {
   if (item.type === 'note') frontMatter.source_nid = item.nid;
   if (item.type === 'post') frontMatter.source_slug = item.remoteSlug;
   frontMatter.content_format = item.contentFormat;
+  frontMatter.related_articles = item.relatedArticles || [];
+  frontMatter.ai_assisted = Boolean(item.aiAssisted);
   frontMatter.managed = true;
 
   const header = yaml.dump(frontMatter, {

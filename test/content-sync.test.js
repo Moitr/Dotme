@@ -9,6 +9,7 @@ const {
   fetchRemoteContent,
   getNotePath,
   getPostPath,
+  normalizedRemoteItem,
   originalContentUrl,
   renderPost,
   runContentSync,
@@ -73,6 +74,35 @@ test('generated front matter retains source identity and numeric permalink slug'
   assert.match(output, /source_id: '123'/);
   assert.match(output, /original_url: https:\/\/moitr\.ren\/posts\/categories\/example/);
   assert.match(output, /\n---\n\n# Body\n$/);
+});
+
+test('related articles keep original-site links and AI metadata', () => {
+  const item = normalizedRemoteItem(
+    'post',
+    { id: '100', meta: { ai_gen: 5 } },
+    detailPost('100', 'example', {
+      meta: { aiGen: [0, 4] },
+      related: [{
+        id: '101',
+        title: 'Context',
+        slug: 'context',
+        category: { name: 'Engineering', slug: 'engineering' },
+        summary: 'Read this first.'
+      }]
+    })
+  );
+
+  assert.equal(item.aiAssisted, true);
+  assert.deepEqual(item.relatedArticles, [{
+    title: 'Context',
+    original_url: 'https://moitr.ren/posts/engineering/context',
+    summary: 'Read this first.'
+  }]);
+
+  const output = renderPost(item, { slug: 9 });
+  assert.match(output, /related_articles:/);
+  assert.match(output, /original_url: https:\/\/moitr\.ren\/posts\/engineering\/context/);
+  assert.match(output, /ai_assisted: true/);
 });
 
 test('original URLs are calculated from Core routing fields and the fixed domain', () => {
@@ -218,7 +248,7 @@ test('CI fallback does not hide permanent HTTP errors', async () => {
   }
 });
 
-function detailPost(id, slug) {
+function detailPost(id, slug, overrides = {}) {
   return {
     id,
     title: `Post ${id}`,
@@ -228,6 +258,7 @@ function detailPost(id, slug) {
     tags: [],
     created_at: '2026-01-01T00:00:00Z',
     modified_at: '2026-01-02T00:00:00Z',
-    category: { name: 'Category', slug: 'categories' }
+    category: { name: 'Category', slug: 'categories' },
+    ...overrides
   };
 }

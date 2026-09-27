@@ -1398,6 +1398,55 @@ html.is-closing-article::view-transition-new(site-content) {
   transform: translate(2px, -2px);
 }
 
+.article-context {
+  padding: 14px 16px;
+  margin: 0 0 30px;
+  border-left: 2px solid var(--line);
+  background: var(--soft);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.article-context p {
+  margin: 0;
+}
+
+.article-related-list {
+  padding-left: 1.25em;
+  margin: 8px 0 0;
+}
+
+.article-related-list li + li {
+  margin-top: 4px;
+}
+
+.article-related-list a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.article-related-list a:hover,
+.article-related-list a:focus-visible {
+  color: color-mix(in srgb, var(--accent), var(--text) 24%);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.article-related-list .article-origin-arrow {
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.article-ai-status {
+  margin-top: 10px !important;
+}
+
+.article-ai-status strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
 .article-content {
   color: color-mix(in srgb, var(--text), var(--muted) 10%);
   font-size: 17px;
