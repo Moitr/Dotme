@@ -76,12 +76,11 @@ test('generated front matter retains source identity and numeric permalink slug'
   assert.match(output, /\n---\n\n# Body\n$/);
 });
 
-test('related articles keep original-site links and AI metadata', () => {
+test('related articles keep original-site links', () => {
   const item = normalizedRemoteItem(
     'post',
-    { id: '100', meta: { ai_gen: 5 } },
+    { id: '100' },
     detailPost('100', 'example', {
-      meta: { aiGen: [0, 4] },
       related: [{
         id: '101',
         title: 'Context',
@@ -92,7 +91,6 @@ test('related articles keep original-site links and AI metadata', () => {
     })
   );
 
-  assert.equal(item.aiAssisted, true);
   assert.deepEqual(item.relatedArticles, [{
     title: 'Context',
     original_url: 'https://moitr.ren/posts/engineering/context',
@@ -102,7 +100,7 @@ test('related articles keep original-site links and AI metadata', () => {
   const output = renderPost(item, { slug: 9 });
   assert.match(output, /related_articles:/);
   assert.match(output, /original_url: https:\/\/moitr\.ren\/posts\/engineering\/context/);
-  assert.match(output, /ai_assisted: true/);
+  assert.doesNotMatch(output, /ai_assisted|aiGen|ai_gen/);
 });
 
 test('original URLs are calculated from Core routing fields and the fixed domain', () => {

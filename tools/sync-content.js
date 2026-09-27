@@ -203,22 +203,6 @@ function originalContentUrl(pathname) {
   return new URL(pathname, `${ORIGINAL_SITE_URL}/`).toString();
 }
 
-function metadataIndicatesAi(value) {
-  if (Array.isArray(value)) return value.some((entry) => metadataIndicatesAi(entry));
-  if (typeof value === 'number') return value > 0;
-  if (typeof value === 'string') {
-    const normalized = value.trim().toLowerCase();
-    return normalized !== '' && normalized !== '0' && normalized !== 'false';
-  }
-  return Boolean(value);
-}
-
-function hasAiMetadata(metadata) {
-  if (!metadata || typeof metadata !== 'object') return false;
-  const value = metadata.aiGen === undefined ? metadata.ai_gen : metadata.aiGen;
-  return value !== undefined && metadataIndicatesAi(value);
-}
-
 function normalizedRelatedArticle(related) {
   if (!related || typeof related !== 'object') return null;
   const id = String(related.id || '').trim();
@@ -269,8 +253,7 @@ function normalizedRemoteItem(type, listItem, detail) {
       : [],
     relatedArticles: Array.isArray(detail.related)
       ? detail.related.map(normalizedRelatedArticle).filter(Boolean)
-      : [],
-    aiAssisted: hasAiMetadata(detail.meta) || hasAiMetadata(listItem && listItem.meta)
+      : []
   };
 
   if (type === 'post') {
@@ -390,7 +373,6 @@ function renderPost(item, mappingEntry) {
   if (item.type === 'post') frontMatter.source_slug = item.remoteSlug;
   frontMatter.content_format = item.contentFormat;
   frontMatter.related_articles = item.relatedArticles || [];
-  frontMatter.ai_assisted = Boolean(item.aiAssisted);
   frontMatter.managed = true;
 
   const header = yaml.dump(frontMatter, {

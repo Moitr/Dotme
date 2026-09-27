@@ -1270,17 +1270,20 @@ html.is-closing-article::view-transition-new(site-content) {
 .article-onchain-status::before {
   position: absolute;
   left: 1px;
-  top: 0.55em;
-  width: 5px;
-  height: 5px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
   border-right: 1px solid currentColor;
   border-bottom: 1px solid currentColor;
   content: "";
-  transform: rotate(-45deg);
+  opacity: 0.72;
+  transform: translateY(-70%) rotate(-45deg);
+  transition: transform 180ms ease, opacity 150ms ease;
 }
 
 .article-onchain[open] > .article-onchain-status::before {
-  transform: rotate(45deg);
+  opacity: 1;
+  transform: translateY(-30%) rotate(45deg);
 }
 
 .article-onchain-status:hover {
@@ -1399,13 +1402,12 @@ html.is-closing-article::view-transition-new(site-content) {
 }
 
 .article-context {
-  padding: 14px 16px;
+  padding: 0 0 16px;
   margin: 0 0 30px;
-  border-left: 2px solid var(--line);
-  background: var(--soft);
+  border-bottom: 1px solid var(--line);
   color: var(--muted);
   font-size: 13px;
-  line-height: 1.65;
+  line-height: 1.6;
 }
 
 .article-context p {
@@ -1413,38 +1415,30 @@ html.is-closing-article::view-transition-new(site-content) {
 }
 
 .article-related-list {
-  padding-left: 1.25em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 18px;
+  padding: 0;
   margin: 8px 0 0;
-}
-
-.article-related-list li + li {
-  margin-top: 4px;
+  list-style: none;
 }
 
 .article-related-list a {
-  color: var(--accent);
-  text-decoration: none;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 3px;
 }
 
 .article-related-list a:hover,
 .article-related-list a:focus-visible {
-  color: color-mix(in srgb, var(--accent), var(--text) 24%);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  color: var(--accent);
+  text-decoration-color: currentColor;
 }
 
 .article-related-list .article-origin-arrow {
   display: inline-block;
   margin-left: 4px;
-}
-
-.article-ai-status {
-  margin-top: 10px !important;
-}
-
-.article-ai-status strong {
-  color: var(--text);
-  font-weight: 600;
 }
 
 .article-content {
