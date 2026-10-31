@@ -1270,19 +1270,17 @@ html.is-closing-article::view-transition-new(site-content) {
   position: absolute;
   left: 1px;
   top: 50%;
-  width: 6px;
-  height: 6px;
-  border-right: 1px solid currentColor;
-  border-bottom: 1px solid currentColor;
-  content: "";
-  opacity: 0.72;
-  transform: translateY(-70%) rotate(-45deg);
-  transition: transform 180ms ease, opacity 150ms ease;
+  color: var(--muted);
+  content: "→";
+  font-size: 0.9em;
+  line-height: 1;
+  transform: translateY(-50%);
+  transition: color 150ms ease, transform 180ms ease;
 }
 
 .article-onchain[open] > .article-onchain-status::before {
-  opacity: 1;
-  transform: translateY(-30%) rotate(45deg);
+  color: var(--text);
+  transform: translateY(-50%) rotate(90deg);
 }
 
 .article-onchain-status:hover {
