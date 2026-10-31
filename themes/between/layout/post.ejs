@@ -25,7 +25,7 @@
       <aside class="article-origin" aria-label="原文来源">
         <span class="article-origin-copy">本文通过自动化程序同步自原博客</span>
         <span class="article-origin-separator" aria-hidden="true"> · </span>
-        <a href="<%= page.original_url %>" target="_blank" rel="noopener noreferrer">阅读原文<span class="article-origin-arrow" aria-hidden="true">↗</span></a>
+        <a href="<%= page.original_url %>" target="_blank" rel="noopener noreferrer">阅读原文<span class="article-origin-arrow" aria-hidden="true">→</span></a>
       </aside>
     <% } %>
     </header>
@@ -36,7 +36,7 @@
         <ul class="article-related-list">
           <% relatedArticles.forEach(function (related) { %>
             <% if (related && related.original_url && related.title) { %>
-              <li><a href="<%= related.original_url %>" target="_blank" rel="noopener noreferrer"><%= related.title %><span class="article-origin-arrow" aria-hidden="true">↗</span></a></li>
+              <li><a href="<%= related.original_url %>" target="_blank" rel="noopener noreferrer"><%= related.title %><span class="article-origin-arrow" aria-hidden="true">→</span></a></li>
             <% } %>
           <% }); %>
         </ul>
