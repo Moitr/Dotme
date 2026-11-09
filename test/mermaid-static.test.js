@@ -5,10 +5,11 @@ const assert = require('node:assert/strict');
 const {
   compactLinearFlowchart,
   replaceMermaidFences,
-  staticDiagramMarkup
+  staticDiagramMarkup,
+  clientDiagramMarkup
 } = require('../tools/lib/mermaid-static');
 
-test('Mermaid fences become static light and dark diagrams', async () => {
+test('Mermaid fences become client-rendered diagrams', async () => {
   const markdown = [
     'Before',
     '',
@@ -19,23 +20,11 @@ test('Mermaid fences become static light and dark diagrams', async () => {
     '',
     'After'
   ].join('\n');
-  const calls = [];
-  const result = await replaceMermaidFences(markdown, async (source, identity) => {
-    calls.push({ source, identity });
-    return {
-      lightSvg: '<svg data-theme="light"></svg>',
-      darkSvg: '<svg data-theme="dark"></svg>',
-      layout: 'tall'
-    };
-  });
+  const result = await replaceMermaidFences(markdown);
 
-  assert.equal(calls.length, 1);
-  assert.equal(calls[0].source, 'flowchart LR\n  A --> B');
-  assert.match(calls[0].identity.hash, /^[a-f0-9]{12}$/);
   assert.doesNotMatch(result, /```mermaid/);
-  assert.match(result, /class="mermaid-diagram mermaid-static mermaid-layout-tall"/);
-  assert.match(result, /data-theme="light"/);
-  assert.match(result, /data-theme="dark"/);
+  assert.match(result, /class="mermaid-diagram mermaid-client"/);
+  assert.match(result, /data-mermaid-source="flowchart LR\n  A --&gt; B"/);
   assert.match(result, /Before[\s\S]*After/);
 });
 
