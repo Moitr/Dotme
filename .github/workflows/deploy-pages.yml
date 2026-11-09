@@ -9,6 +9,7 @@ on:
       - "themes/**"
       - "scripts/**"
       - "tools/**"
+      - "test/**"
       - ".github/workflows/**"
       - "_config.yml"
       - "package.json"
