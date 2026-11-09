@@ -5,10 +5,13 @@ const path = require('node:path');
 
 const packageEntry = require.resolve('swup');
 const swupBundle = path.join(path.dirname(packageEntry), 'Swup.umd.js');
+const mermaidBundle = path.join(path.dirname(require.resolve('mermaid')), 'mermaid.min.js');
 const themeScripts = [
   swupBundle,
+  mermaidBundle,
   path.join(hexo.theme_dir, 'source', 'js', 'main.js'),
-  path.join(hexo.theme_dir, 'source', 'js', 'pjax.js')
+  path.join(hexo.theme_dir, 'source', 'js', 'pjax.js'),
+  path.join(hexo.theme_dir, 'source', 'js', 'mermaid-client.js')
 ];
 
 hexo.extend.generator.register('swup-assets', () => [{

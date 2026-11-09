@@ -9,7 +9,6 @@
   var loadingTimer;
   var loadingStartedAt = 0;
   var loadingIndicator = document.querySelector('[data-page-loading]');
-
   function setPageLoading(active) {
     if (!loadingIndicator) return;
     window.clearTimeout(loadingTimer);

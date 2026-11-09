@@ -29,6 +29,16 @@ function staticDiagramMarkup(source, lightSvg, darkSvg, layout = 'balanced') {
   ].join('\n');
 }
 
+function clientDiagramMarkup(source) {
+  const label = escapeAttribute(diagramLabel(source));
+  const encoded = escapeAttribute(source);
+  return [
+    `<figure class="mermaid-diagram mermaid-client" role="img" aria-label="${label}" data-mermaid-source="${encoded}">`,
+    `  <div class="mermaid-client-canvas" aria-hidden="true"></div>`,
+    '</figure>'
+  ].join('\n');
+}
+
 function compactLinearFlowchart(source) {
   const lines = String(source).replace(/\r\n?/g, '\n').split('\n');
   const header = lines.shift();
@@ -93,13 +103,8 @@ async function replaceMermaidFences(markdown, renderDiagram) {
   for (const [index, match] of matches.entries()) {
     const source = match[2].replace(/\r\n?/g, '\n').trim();
     if (!source) throw new Error(`Mermaid diagram ${index + 1} is empty.`);
-    const hash = crypto.createHash('sha256').update(source).digest('hex').slice(0, 12);
-    const rendered = await renderDiagram(source, { index, hash });
-    if (!rendered || !rendered.lightSvg || !rendered.darkSvg) {
-      throw new Error(`Mermaid diagram ${index + 1} did not produce both themes.`);
-    }
     output += sourceText.slice(cursor, match.index);
-    output += staticDiagramMarkup(source, rendered.lightSvg, rendered.darkSvg, rendered.layout);
+    output += clientDiagramMarkup(source);
     cursor = match.index + match[0].length;
   }
   return output + sourceText.slice(cursor);
@@ -108,5 +113,6 @@ async function replaceMermaidFences(markdown, renderDiagram) {
 module.exports = {
   compactLinearFlowchart,
   replaceMermaidFences,
-  staticDiagramMarkup
+  staticDiagramMarkup,
+  clientDiagramMarkup
 };

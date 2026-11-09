@@ -51,6 +51,7 @@
       var isDark = root.classList.toggle('dark');
       localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
       updateThemeColor();
+      document.dispatchEvent(new CustomEvent('themechange'));
     });
   });
 
